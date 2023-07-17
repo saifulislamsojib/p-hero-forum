@@ -1,3 +1,4 @@
+import Toaster from "@/components/ui/toast";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ReactNode } from "react";
@@ -21,7 +22,10 @@ type Props = {
 const RootLayout = ({ children }: Props) => {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-roboto`}>{children}</body>
+      <body className={`${inter.variable} font-roboto`}>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 };
