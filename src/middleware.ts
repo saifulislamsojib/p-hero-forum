@@ -16,21 +16,21 @@ export const middleware = async (request: NextRequest) => {
       },
     });
     await res.json();
-    if (isPath("/login") || isPath("/signup")) {
+    if (isPath("/auth/login") || isPath("/auth/signup")) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();
   } catch (error) {
-    if (isPath("/login") || isPath("/signup")) {
+    if (isPath("/auth/login") || isPath("/auth/signup")) {
       return NextResponse.next();
     }
     return NextResponse.redirect(
-      new URL(`/login?redirectUrl=${pathname}`, request.url)
+      new URL(`/auth/login?redirectUrl=${pathname}`, request.url)
     );
   }
 };
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/", "/login/:path*", "/signup/:path*"],
+  matcher: ["/", "/auth/:path*"],
 };

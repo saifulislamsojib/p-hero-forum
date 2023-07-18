@@ -3,6 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  userFailure,
+  userLoading,
+  userLogin,
+} from "@/redux/features/user/userSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import { useRouter, useSearchParams } from "next/navigation";
 import { startTransition } from "react";
@@ -24,23 +30,28 @@ const LoginForm = () => {
   const search = useSearchParams();
   const from = search.get("redirectUrl") || "/";
   const { replace, refresh } = useRouter();
+  const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
     const toastId = toast.loading("User Login...");
+    dispatch(userLoading());
     try {
       const data = await authService.login({ email, password });
       if ("error" in data) {
+        dispatch(userFailure(data.error));
         toast.dismiss(toastId);
         toast.error(data.error);
       } else {
         startTransition(() => {
           refresh();
+          dispatch(userLogin(data.auth));
           toast.dismiss(toastId);
           toast.success(data.message);
           replace(from);
         });
       }
     } catch (error) {
+      dispatch(userFailure((error as Error).message));
       toast.dismiss(toastId);
       console.log(error);
     }

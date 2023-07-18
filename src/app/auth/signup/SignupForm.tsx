@@ -10,9 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  userFailure,
+  userLoading,
+  userLogin,
+} from "@/redux/features/user/userSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
@@ -39,9 +45,12 @@ const SignupForm = () => {
     },
   });
 
+  const [isUser, setIsUser] = useState(true);
+
   const search = useSearchParams();
   const from = search.get("redirectUrl") || "/";
   const { replace, refresh } = useRouter();
+  const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
@@ -51,6 +60,7 @@ const SignupForm = () => {
     batch,
   }) => {
     const toastId = toast.loading("User Creating...");
+    dispatch(userLoading());
     try {
       const data = await authService.signup({
         name,
@@ -63,15 +73,18 @@ const SignupForm = () => {
       if ("errors" in data) {
         toast.dismiss(toastId);
         console.log(data.errors);
+        dispatch(userFailure("validation failed"));
       } else {
         startTransition(() => {
           refresh();
+          dispatch(userLogin(data.auth));
           toast.dismiss(toastId);
           toast.success(data.message);
           replace(from);
         });
       }
     } catch (error) {
+      dispatch(userFailure((error as Error).message));
       toast.dismiss(toastId);
       console.log(error);
     }
@@ -117,7 +130,10 @@ const SignupForm = () => {
 
           <Select
             defaultValue="user"
-            onValueChange={(value) => setValue("role", value)}
+            onValueChange={(value) => {
+              setValue("role", value);
+              setIsUser(value === "user");
+            }}
           >
             <SelectTrigger id="role">
               <SelectValue placeholder="Select" />
@@ -128,25 +144,27 @@ const SignupForm = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="batch">Batch</Label>
+        {isUser && (
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="batch">Batch</Label>
 
-          <Select
-            defaultValue="batch-8"
-            onValueChange={(value) => setValue("batch", value)}
-          >
-            <SelectTrigger id="batch">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              {[...Array(8)].map((_, i) => (
-                <SelectItem key={i} value={`batch-${i + 1}`}>
-                  Batch {i + 1}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <Select
+              defaultValue="batch-8"
+              onValueChange={(value) => setValue("batch", value)}
+            >
+              <SelectTrigger id="batch">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                {[...Array(8)].map((_, i) => (
+                  <SelectItem key={i} value={`batch-${i + 1}`}>
+                    Batch {i + 1}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="password">Password</Label>
           <Input

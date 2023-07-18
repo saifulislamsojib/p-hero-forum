@@ -38,6 +38,12 @@ class AuthService {
   logout() {
     return requests.get("/api/auth/logout");
   }
+
+  currentUser(): Promise<{
+    auth: User;
+  }> {
+    return requests.get("/api/auth");
+  }
 }
 
 const authService = new AuthService();

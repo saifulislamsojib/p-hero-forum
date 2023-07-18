@@ -1,7 +1,9 @@
+import Navbar from "@/components/Navbar/Navbar";
 import Toaster from "@/components/ui/toast";
+import Providers from "@/providers/Providers";
+import LayoutProps from "@/types/LayoutProps";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { ReactNode } from "react";
 import "./globals.css";
 
 const inter = Roboto({
@@ -11,19 +13,18 @@ const inter = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "P-Hero Forum",
+  title: "P.H Forum",
   description: "This a forum for programmers and developers",
 };
 
-type Props = {
-  children: ReactNode;
-};
-
-const RootLayout = ({ children }: Props) => {
+const RootLayout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body className={`${inter.variable} font-roboto`}>
-        {children}
+        <Providers>
+          <Navbar />
+          <main className="container mt-5">{children}</main>
+        </Providers>
         <Toaster />
       </body>
     </html>
