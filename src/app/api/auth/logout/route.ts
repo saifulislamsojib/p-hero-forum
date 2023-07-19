@@ -1,15 +1,13 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export const GET = async () => {
-  const res = new NextResponse(
-    JSON.stringify({
-      message: "Logout successfully",
-    })
-  );
-  res.cookies.set({
+  cookies().set({
     name: "jwtToken",
     value: "",
     expires: new Date(Date.now()),
   });
-  return res;
+  return NextResponse.json({
+    message: "Logout successfully",
+  });
 };
