@@ -10,7 +10,6 @@ export const GET = async () => {
     name: "jwtToken",
     value: "",
     expires: new Date(Date.now()),
-    maxAge: 0,
   });
   return res;
 };

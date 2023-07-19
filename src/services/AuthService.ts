@@ -36,7 +36,9 @@ class AuthService {
   }
 
   logout() {
-    return requests.get("/api/auth/logout");
+    return requests.get<{
+      message: string;
+    }>("/api/auth/logout");
   }
 
   currentUser(): Promise<{

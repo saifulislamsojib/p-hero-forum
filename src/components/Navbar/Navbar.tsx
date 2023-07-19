@@ -48,12 +48,12 @@ const Navbar = () => {
     const toastId = toast.loading("Loading...");
     dispatch(userLoading());
     try {
-      await authService.logout();
+      const res = await authService.logout();
       startTransition(() => {
         refresh();
         dispatch(userLogout());
         toast.dismiss(toastId);
-        toast.success("Logout successfully!");
+        toast.success(res.message);
       });
     } catch (error) {
       dispatch(userFailure((error as Error).message));
