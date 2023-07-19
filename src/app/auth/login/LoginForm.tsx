@@ -44,10 +44,10 @@ const LoginForm = () => {
       } else {
         startTransition(() => {
           refresh();
+          replace(from);
           dispatch(userLogin(data.auth));
           toast.dismiss(toastId);
           toast.success(data.message);
-          replace(from);
         });
       }
     } catch (error) {

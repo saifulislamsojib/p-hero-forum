@@ -64,7 +64,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-200 py-3 sticky top-0">
+    <nav className="bg-slate-100 py-3 sticky top-0">
       <div className="flex items-center gap-6 container">
         <Link href="/">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-accent min-w-max">
@@ -79,7 +79,7 @@ const Navbar = () => {
               </NavLink>
             </li>
           ))}
-          <li className="flex items-center bg-slate-300 px-2 w-full max-w-[400px] rounded-xl">
+          <li className="flex items-center bg-slate-200 px-2 w-full max-w-[400px] rounded-xl">
             <AiOutlineSearch className="text-xl" />
             <input
               type="text"
