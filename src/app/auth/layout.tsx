@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const AuthLayout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center p-3">
+    <div className="min-h-[calc(100vh-84px)] flex items-center p-3">
       <Card className="w-full max-w-[600px] mx-auto">{children}</Card>
     </div>
   );
