@@ -65,7 +65,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-slate-100 py-3 sticky top-0">
-      <div className="flex items-center gap-6 container">
+      <div className="flex items-center gap-10 container">
         <Link href="/">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-accent min-w-max">
             P.H Forum

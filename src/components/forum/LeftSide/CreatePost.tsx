@@ -1,24 +1,29 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 import { AiOutlineCamera } from "react-icons/ai";
 import { CiImageOn } from "react-icons/ci";
 import { LiaPenAltSolid } from "react-icons/lia";
+import CreatePostForm from "./CreatePostForm";
 
 const CreatePost = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <div>
       <Card className="bg-slate-100 pt-8">
         <CardContent>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <div className="flex items-center gap-5">
               <Avatar className="cursor-pointer">
                 <AvatarImage alt="user" />
@@ -47,16 +52,13 @@ const CreatePost = () => {
                 </DialogTrigger>
               </div>
             </div>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle className="text-center border-b pb-4">
                   Create post
                 </DialogTitle>
               </DialogHeader>
-              <div className=""></div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
-              </DialogFooter>
+              <CreatePostForm setOpen={setOpen} />
             </DialogContent>
           </Dialog>
         </CardContent>
