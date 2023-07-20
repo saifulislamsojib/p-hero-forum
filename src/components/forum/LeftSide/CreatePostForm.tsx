@@ -29,6 +29,9 @@ const categories = [
   "Firebase Authentication",
   "Node(Express)",
   "Mongodb",
+  "SCIC",
+  "ACC",
+  "Other",
 ];
 
 const tags = ["Help", "Feedback", "Github", "Deployment", "Es6", "React"];
@@ -106,13 +109,29 @@ const CreatePostForm = ({ setOpen }: Props) => {
     setCategoryError(false);
   };
 
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
-    console.log(e.target.files);
-    setValue(
-      "imagesOrVideos",
-      Array.from(e.target.files).map((file) => file.name)
-    );
+    const toastId = toast.loading("Uploading...");
+    try {
+      const promises = Array.from(e.target.files).map((file) => {
+        const formData = new FormData();
+        formData.append(
+          "upload_preset",
+          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!
+        );
+        formData.append("file", file);
+        return postService.imageOrVideoUpload(formData);
+      });
+      const imageOrVideoData = await Promise.all(promises);
+      toast.dismiss(toastId);
+      toast.success("Uploaded  successfully!");
+      const urls = imageOrVideoData.map(({ secure_url }) => secure_url);
+      setValue("imagesOrVideos", urls);
+    } catch (error) {
+      console.log(error);
+      toast.dismiss(toastId);
+      toast.success("Not Uploaded!");
+    }
   };
 
   return (

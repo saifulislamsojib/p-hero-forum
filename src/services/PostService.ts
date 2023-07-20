@@ -5,6 +5,9 @@ class PostService {
   createPost(body: PostBody): Promise<{ message: string }> {
     return requests.post("/api/post", body);
   }
+  imageOrVideoUpload(formData: FormData): Promise<{ secure_url: string }> {
+    return requests.post(process.env.NEXT_PUBLIC_CLOUDINARY_URL!, formData);
+  }
 
   updatePost(body: PostBody): Promise<{ message: string }> {
     return requests.patch("/api/post", body);

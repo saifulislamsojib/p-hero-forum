@@ -1,3 +1,5 @@
+import User from "./User";
+
 export interface PostBody {
   postBody: string;
   tags: string[];
@@ -6,6 +8,7 @@ export interface PostBody {
 }
 
 interface Post extends PostBody {
+  _id: string;
   status:
     | "new"
     | "resolved"
@@ -16,7 +19,7 @@ interface Post extends PostBody {
   commentOffBy?: "me" | "admin";
   createdAt: string;
   updatedAt: string;
-  author: string;
+  author: User;
   upvote: number;
   commentsCount: number;
   priority: "High" | "Medium" | "Low";

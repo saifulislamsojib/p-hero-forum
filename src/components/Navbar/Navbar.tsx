@@ -10,9 +10,9 @@ import { useAppDispatch, useUser } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { toast } from "react-hot-toast";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { BiBookmark } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
 import { LuBellRing } from "react-icons/lu";
@@ -41,6 +41,7 @@ const Navbar = () => {
   const { user } = useUser();
   const pathname = usePathname();
   const { refresh } = useRouter();
+  const [navToggle, setNavToggle] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -64,17 +65,32 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-100 py-3 sticky top-0">
-      <div className="flex items-center gap-10 container">
+    <nav className="bg-slate-100 py-3 sticky top-0 z-10">
+      <div className="flex items-center justify-between lg:gap-10 container">
         <Link href="/">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-accent min-w-max">
             P.H Forum
           </h3>
         </Link>
-        <ul className="flex items-center gap-5 text-gray-600 w-full justify-end">
+        <div
+          onClick={() => setNavToggle((pre) => !pre)}
+          className="text-3xl cursor-pointer select-none lg:hidden"
+        >
+          {navToggle ? <AiOutlineClose /> : <AiOutlineMenu />}
+        </div>
+        <ul
+          className={`flex flex-col lg:flex-row absolute lg:static top-[60px] ${
+            navToggle ? "left-0" : "-left-full"
+          }  bg-slate-100 lg:bg-transparent items-center gap-2 lg:gap-5 text-gray-600 w-full max-w-xs lg:max-w-none lg:justify-end py-2 lg:py-0 min-h-[calc(100vh-60px)] lg:min-h-0 transition-all duration-300 px-2 lg:px-0`}
+        >
           {navItems.map(({ id, title, path }) => (
             <li key={id} className="min-w-max">
-              <NavLink href={path} activeClassName="text-accent" exact>
+              <NavLink
+                onClick={() => setNavToggle(false)}
+                href={path}
+                activeClassName="text-accent"
+                exact
+              >
                 {title}
               </NavLink>
             </li>
@@ -87,7 +103,7 @@ const Navbar = () => {
               placeholder="Search here..."
             />
           </li>
-          <li className="flex items-center text-2xl gap-5">
+          <li className="flex flex-col lg:flex-row items-center text-2xl gap-2 lg:gap-5">
             <LuBellRing className="cursor-pointer" />
             <BiBookmark className="cursor-pointer" />
             <Avatar className="cursor-pointer">
