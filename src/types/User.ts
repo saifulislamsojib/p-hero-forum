@@ -2,7 +2,8 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  role: string;
+  role: "user" | "admin";
+  batch?: string;
 }
 
 export default User;

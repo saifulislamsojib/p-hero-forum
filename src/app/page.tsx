@@ -12,13 +12,13 @@ const HomePage = ({
   searchParams: { category },
 }: PageProps<{}, { category: string }>) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-9 gap-5">
-      <div className="md:col-span-6">
+    <div className="grid grid-cols-1 lg:grid-cols-11 gap-5">
+      <div className="lg:col-span-7">
         <CreatePost />
         <FeedTab />
         <FeedPosts category={category} />
       </div>
-      <div className="md:col-span-3">Top Issue/Trending Issue</div>
+      <div className="lg:col-span-4">Top Issue/Trending Issue</div>
     </div>
   );
 };

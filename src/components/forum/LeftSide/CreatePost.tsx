@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useUser } from "@/redux/hooks";
 import { useState } from "react";
 import { AiOutlineCamera } from "react-icons/ai";
 import { CiImageOn } from "react-icons/ci";
@@ -18,16 +19,17 @@ import CreatePostForm from "./CreatePostForm";
 
 const CreatePost = () => {
   const [open, setOpen] = useState(false);
+  const { name } = useUser().user;
 
   return (
     <div>
-      <Card className="bg-slate-100 pt-8">
+      <Card className="bg-slate-100 pt-5">
         <CardContent>
           <Dialog open={open} onOpenChange={setOpen}>
-            <div className="flex items-center gap-5">
-              <Avatar className="cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Avatar className="cursor-pointer text-2xl">
                 <AvatarImage alt="user" />
-                <AvatarFallback></AvatarFallback>
+                <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
               </Avatar>
               <DialogTrigger asChild>
                 <input
@@ -40,8 +42,12 @@ const CreatePost = () => {
             </div>
             <div className="flex items-center justify-between mt-5">
               <div className="flex items-center text-xl gap-4">
-                <AiOutlineCamera className="cursor-pointer" />
-                <CiImageOn className="cursor-pointer" />
+                <DialogTrigger>
+                  <AiOutlineCamera className="cursor-pointer" />
+                </DialogTrigger>
+                <DialogTrigger>
+                  <CiImageOn className="cursor-pointer" />
+                </DialogTrigger>
               </div>
               <div className="flex items-center">
                 <Button variant="link">

@@ -10,11 +10,10 @@ import { useAppDispatch, useUser } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlineClose, AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { BiBookmark } from "react-icons/bi";
-import { FaUser } from "react-icons/fa";
 import { LuBellRing } from "react-icons/lu";
 import { Button } from "../ui/button";
 import NavLink from "./NavLink";
@@ -42,6 +41,22 @@ const Navbar = () => {
   const pathname = usePathname();
   const { refresh } = useRouter();
   const [navToggle, setNavToggle] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let toastId: string | undefined;
+    if (isPending) {
+      toastId = toast.loading("Loading...");
+    } else if (toastId) {
+      toast.dismiss(toastId);
+    }
+
+    return () => {
+      if (toastId) {
+        toast.dismiss(toastId);
+      }
+    };
+  }, [isPending]);
 
   const dispatch = useAppDispatch();
 
@@ -65,7 +80,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-100 py-3 sticky top-0 z-10">
+    <nav className="bg-slate-100 py-3 sticky top-0 z-10 border-b shadow">
       <div className="flex items-center justify-between lg:gap-10 container">
         <Link href="/">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-accent min-w-max">
@@ -106,12 +121,14 @@ const Navbar = () => {
           <li className="flex flex-col lg:flex-row items-center text-2xl gap-2 lg:gap-5">
             <LuBellRing className="cursor-pointer" />
             <BiBookmark className="cursor-pointer" />
-            <Avatar className="cursor-pointer">
-              <AvatarImage alt="user" title={user.name} />
-              <AvatarFallback>
-                <FaUser />
-              </AvatarFallback>
-            </Avatar>
+            {user._id && (
+              <Avatar className="cursor-pointer">
+                <AvatarImage alt="user" title={user.name} />
+                <AvatarFallback title={user.name}>
+                  {user.name[0]}
+                </AvatarFallback>
+              </Avatar>
+            )}
             {user._id ? (
               <Button onClick={handleLogout} variant="outline">
                 Logout

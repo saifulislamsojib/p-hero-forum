@@ -18,7 +18,7 @@ import {
 import { useAppDispatch } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
@@ -51,6 +51,22 @@ const SignupForm = () => {
   const from = search.get("redirectUrl") || "/";
   const { replace, refresh } = useRouter();
   const dispatch = useAppDispatch();
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let toastId: string | undefined;
+    if (isPending) {
+      toastId = toast.loading("Loading...");
+    } else if (toastId) {
+      toast.dismiss(toastId);
+    }
+
+    return () => {
+      if (toastId) {
+        toast.dismiss(toastId);
+      }
+    };
+  }, [isPending]);
 
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
@@ -72,7 +88,7 @@ const SignupForm = () => {
 
       if ("errors" in data) {
         toast.dismiss(toastId);
-        console.log(data.errors);
+        Object.values(data.errors).forEach((error) => toast.error(error));
         dispatch(userFailure("validation failed"));
       } else {
         startTransition(() => {

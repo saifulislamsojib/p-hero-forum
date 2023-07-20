@@ -42,7 +42,8 @@ class AuthService {
   }
 
   currentUser(): Promise<{
-    auth: User;
+    auth?: User;
+    message?: string;
   }> {
     return requests.get("/api/auth");
   }

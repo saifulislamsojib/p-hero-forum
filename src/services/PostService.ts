@@ -1,4 +1,4 @@
-import { PostBody } from "@/types/Post";
+import Post, { PostBody } from "@/types/Post";
 import { requests } from "./httpService";
 
 class PostService {
@@ -9,12 +9,29 @@ class PostService {
     return requests.post(process.env.NEXT_PUBLIC_CLOUDINARY_URL!, formData);
   }
 
-  updatePost(body: PostBody): Promise<{ message: string }> {
-    return requests.patch("/api/post", body);
+  updatePost(id: string, body: PostBody): Promise<{ message: string }> {
+    return requests.patch(`/api/post/${id}`, body);
   }
 
-  deletePost(): Promise<{ message: string }> {
-    return requests.delete("/api/post");
+  updateStatusPost(
+    id: string,
+    body: Pick<Post, "status">
+  ): Promise<{ message: string }> {
+    return requests.patch(`/api/post/status/${id}`, body);
+  }
+
+  commentOfPost(
+    id: string,
+    body: { commentOff: boolean }
+  ): Promise<{ message: string }> {
+    return requests.patch(`/api/post/commentOff/${id}`, body);
+  }
+
+  deletePost(id: string): Promise<{ message: string; deletedCount: number }> {
+    return requests.delete(`/api/post/${id}`);
+  }
+  upvotePost(id: string): Promise<{ message: string }> {
+    return requests.patch(`/api/post/upvote/${id}`, {});
   }
 }
 

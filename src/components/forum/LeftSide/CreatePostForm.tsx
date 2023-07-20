@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/select";
 import { useUser } from "@/redux/hooks";
 import postService from "@/services/PostService";
-import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { BsCameraVideo, BsCardImage } from "react-icons/bs";
 
 const categories = [
   "Github",
@@ -64,6 +66,24 @@ const CreatePostForm = ({ setOpen }: Props) => {
   const [selectedTags, setSelectedTags] = useState([tags[0]]);
   const [categoryError, setCategoryError] = useState(false);
 
+  const [isPending, startTransition] = useTransition();
+  const { refresh } = useRouter();
+
+  useEffect(() => {
+    let toastId: string | undefined;
+    if (isPending) {
+      toastId = toast.loading("Loading...");
+    } else if (toastId) {
+      toast.dismiss(toastId);
+    }
+
+    return () => {
+      if (toastId) {
+        toast.dismiss(toastId);
+      }
+    };
+  }, [isPending]);
+
   const handleTagsClick = (tag: string) => {
     setSelectedTags((preTags) => {
       if (preTags.includes(tag)) {
@@ -87,9 +107,12 @@ const CreatePostForm = ({ setOpen }: Props) => {
           imagesOrVideos,
           tags,
         });
-        toast.dismiss(toastId);
-        toast.success(message);
         setOpen(false);
+        startTransition(() => {
+          refresh();
+          toast.dismiss(toastId);
+          toast.success(message);
+        });
       } catch (error) {
         console.log(error);
         toast.dismiss(toastId);
@@ -137,9 +160,9 @@ const CreatePostForm = ({ setOpen }: Props) => {
   return (
     <form className="" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex gap-2">
-        <Avatar className="cursor-pointer">
+        <Avatar className="cursor-pointer text-2xl">
           <AvatarImage alt="user" />
-          <AvatarFallback></AvatarFallback>
+          <AvatarFallback>{name?.[0]}</AvatarFallback>
         </Avatar>
         <h4 className="scroll-m-20 text-md font-medium tracking-tight">
           {name}
@@ -155,7 +178,7 @@ const CreatePostForm = ({ setOpen }: Props) => {
           {...register("postBody", { required: true })}
         ></textarea>
       </div>
-      <div className="my-2 flex items-center justify-between gap-3">
+      <div className="my-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="w-full">
           <Select onValueChange={handleCategoryChange}>
             <SelectTrigger
@@ -180,7 +203,7 @@ const CreatePostForm = ({ setOpen }: Props) => {
             </SelectContent>
           </Select>
         </div>
-        <div className="min-w-max">
+        <div className="w-full">
           <input
             onChange={handleImageUpload}
             type="file"
@@ -190,8 +213,9 @@ const CreatePostForm = ({ setOpen }: Props) => {
           />
 
           <Button asChild variant="outline" type="button">
-            <label htmlFor="upload" className="cursor-pointer">
-              Upload Images / Videos
+            <label htmlFor="upload" className="cursor-pointer w-full">
+              Upload <BsCardImage className="text-xl mx-1 sm:mx-2" /> /
+              <BsCameraVideo className="text-xl ms-1 sm:ms-2" />
             </label>
           </Button>
         </div>
