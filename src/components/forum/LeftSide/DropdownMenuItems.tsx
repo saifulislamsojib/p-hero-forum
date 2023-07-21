@@ -1,12 +1,14 @@
 "use client";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import Modal from "@/components/ui/modal";
 import { useUser } from "@/redux/hooks";
 import postService from "@/services/PostService";
 import Post from "@/types/Post";
 import { useRouter } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
+import CreatePostForm from "./CreatePostForm";
 
 type Props = {
   post: Post;
@@ -16,8 +18,8 @@ const DropdownMenuItems = ({ post }: Props) => {
   const { role, _id } = useUser().user;
   const { status, author, commentOff } = post;
   const isMe = author._id === _id;
-
   const [isPending, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
   const { refresh } = useRouter();
 
   useEffect(() => {
@@ -95,8 +97,29 @@ const DropdownMenuItems = ({ post }: Props) => {
           Resolve the post
         </DropdownMenuItem>
       )}
-      {isMe && <DropdownMenuItem>Edit post</DropdownMenuItem>}
-      {role === "admin" && <DropdownMenuItem>Update Status</DropdownMenuItem>}
+      {(isMe || role === "admin") && (
+        <>
+          {isMe && (
+            <div
+              className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              onClick={() => setOpen(true)}
+            >
+              Edit post
+            </div>
+          )}
+          {role === "admin" && (
+            <div
+              className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+              onClick={() => setOpen(true)}
+            >
+              Update Status
+            </div>
+          )}
+          <Modal open={open} setOpen={setOpen} heading="Edit post">
+            <CreatePostForm setOpen={setOpen} post={post} />
+          </Modal>
+        </>
+      )}
       {(isMe || role === "admin") && (
         <DropdownMenuItem onClick={() => handleDeletePost(post._id)}>
           Delete post

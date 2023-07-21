@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 type Inputs = {
   name: string;
@@ -52,6 +53,7 @@ const SignupForm = () => {
   const { replace, refresh } = useRouter();
   const dispatch = useAppDispatch();
   const [isPending, startTransition] = useTransition();
+  const [isPasswordShowing, setPasswordShowing] = useState(false);
 
   useEffect(() => {
     let toastId: string | undefined;
@@ -183,13 +185,22 @@ const SignupForm = () => {
         )}
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            placeholder="Enter password"
-            type="password"
-            autoComplete="new-password"
-            {...register("password", { required: true, minLength: 6 })}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              placeholder="Enter password"
+              type="password"
+              autoComplete="new-password"
+              className="pr-6"
+              {...register("password", { required: true, minLength: 6 })}
+            />
+            <div
+              className="cursor-pointer absolute top-1/2 -translate-y-1/2 right-1 select-none text-xl"
+              onClick={() => setPasswordShowing((pre) => !pre)}
+            >
+              {isPasswordShowing ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </div>
+          </div>
           {errors.password && (
             <span className="text-red-500 text-base mt-1">
               Enter a password with 6 characters.
@@ -198,19 +209,28 @@ const SignupForm = () => {
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            placeholder="Enter confirm password"
-            type="password"
-            autoComplete="new-password"
-            {...register("confirmPassword", {
-              required: true,
-              minLength: 6,
-              validate: (value) =>
-                value === getValues("password") ||
-                "The passwords do not match.",
-            })}
-          />
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              placeholder="Enter confirm password"
+              type="password"
+              autoComplete="new-password"
+              className="pr-6"
+              {...register("confirmPassword", {
+                required: true,
+                minLength: 6,
+                validate: (value) =>
+                  value === getValues("password") ||
+                  "The passwords do not match.",
+              })}
+            />
+            <div
+              className="cursor-pointer absolute top-1/2 -translate-y-1/2 right-1 select-none text-xl"
+              onClick={() => setPasswordShowing((pre) => !pre)}
+            >
+              {isPasswordShowing ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </div>
+          </div>
           {errors.confirmPassword && (
             <span className="text-red-500 text-base mt-1">
               {errors.confirmPassword.message || "Confirm your password."}

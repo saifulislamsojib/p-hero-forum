@@ -3,20 +3,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useUser } from "@/redux/hooks";
 import postService from "@/services/PostService";
+import Post from "@/types/Post";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { BsCameraVideo, BsCardImage } from "react-icons/bs";
+import Select from "react-select";
 
 const categories = [
   "Github",
@@ -34,9 +29,12 @@ const categories = [
   "SCIC",
   "ACC",
   "Other",
-];
+].map((category) => ({
+  value: category.toLowerCase().split(" ").join("-"),
+  label: category,
+}));
 
-const tags = ["Help", "Feedback", "Github", "Deployment", "Es6", "React"];
+const tagsItems = ["Help", "Feedback", "Github", "Deployment", "Es6", "React"];
 
 type Inputs = {
   postBody: string;
@@ -46,10 +44,13 @@ type Inputs = {
 
 type Props = {
   setOpen: (value: boolean) => void;
+  post?: Post;
 };
 
-const CreatePostForm = ({ setOpen }: Props) => {
+const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
   const { name } = useUser().user;
+
+  const { postBody, category, imagesOrVideos, tags } = post;
 
   const {
     register,
@@ -59,11 +60,11 @@ const CreatePostForm = ({ setOpen }: Props) => {
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
-      imagesOrVideos: [],
+      imagesOrVideos: imagesOrVideos || [],
     },
   });
 
-  const [selectedTags, setSelectedTags] = useState([tags[0]]);
+  const [selectedTags, setSelectedTags] = useState(tags || [tagsItems[0]]);
   const [categoryError, setCategoryError] = useState(false);
 
   const [isPending, startTransition] = useTransition();
@@ -105,7 +106,7 @@ const CreatePostForm = ({ setOpen }: Props) => {
           postBody,
           category,
           imagesOrVideos,
-          tags,
+          tags: selectedTags,
         });
         setOpen(false);
         startTransition(() => {
@@ -176,11 +177,12 @@ const CreatePostForm = ({ setOpen }: Props) => {
           }`}
           placeholder="Write your problems in details here..."
           {...register("postBody", { required: true })}
+          defaultValue={postBody}
         ></textarea>
       </div>
       <div className="my-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="w-full">
-          <Select onValueChange={handleCategoryChange}>
+          {/* <Select onValueChange={handleCategoryChange} defaultValue={category}>
             <SelectTrigger
               id="category"
               className={
@@ -191,7 +193,7 @@ const CreatePostForm = ({ setOpen }: Props) => {
             >
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent>
               {categories.map((category) => {
                 const value = category.toLowerCase().split(" ").join("-");
                 return (
@@ -201,7 +203,21 @@ const CreatePostForm = ({ setOpen }: Props) => {
                 );
               })}
             </SelectContent>
-          </Select>
+          </Select> */}
+          <Select
+            placeholder="Select a category"
+            onInputChange={handleCategoryChange}
+            defaultValue={
+              category
+                ? {
+                    value: category,
+                    label: categories.find((it) => it.value === category)
+                      ?.label,
+                  }
+                : undefined
+            }
+            options={categories}
+          />
         </div>
         <div className="w-full">
           <input
@@ -223,11 +239,11 @@ const CreatePostForm = ({ setOpen }: Props) => {
       <div>
         <Label>Select tags: </Label>
         <div className="flex flex-wrap text-sm items-center gap-3 mt-1">
-          {tags.map((tag) => (
+          {tagsItems.map((tag) => (
             <span
               key={tag}
               onClick={() => handleTagsClick(tag)}
-              className={`border rounded-md p-1 px-2 cursor-pointer select-none${
+              className={`border rounded-md p-1 px-2 cursor-pointer select-none transition-all${
                 selectedTags.includes(tag)
                   ? " bg-primary text-primary-foreground"
                   : ""
@@ -239,7 +255,7 @@ const CreatePostForm = ({ setOpen }: Props) => {
         </div>
       </div>
       <Button onClick={handleSubmitClick} type="submit" className="w-full mt-3">
-        Post
+        {postBody ? "Update Post" : "Post"}
       </Button>
     </form>
   );

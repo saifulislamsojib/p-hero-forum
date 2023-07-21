@@ -3,10 +3,10 @@ import Toaster from "@/components/ui/toast";
 import Providers from "@/providers/Providers";
 import LayoutProps from "@/types/LayoutProps";
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
-const inter = Roboto({
+const inter = Poppins({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
   variable: "--font-roboto",

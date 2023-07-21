@@ -119,7 +119,12 @@ const Navbar = () => {
             />
           </li>
           <li className="flex flex-col lg:flex-row items-center text-2xl gap-2 lg:gap-5">
-            <LuBellRing className="cursor-pointer" />
+            <div className="relative cursor-pointer">
+              <LuBellRing />
+              <span className="absolute top-[-30%] right-[-20%] text-xs w-4 h-4 flex items-center justify-center rounded-full bg-accent text-accent-foreground">
+                0
+              </span>
+            </div>
             <BiBookmark className="cursor-pointer" />
             {user._id && (
               <Avatar className="cursor-pointer">

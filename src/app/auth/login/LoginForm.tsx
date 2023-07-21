@@ -11,9 +11,10 @@ import {
 import { useAppDispatch } from "@/redux/hooks";
 import authService from "@/services/AuthService";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 type Inputs = {
   email: string;
@@ -32,6 +33,7 @@ const LoginForm = () => {
   const { replace, refresh } = useRouter();
   const dispatch = useAppDispatch();
   const [isPending, startTransition] = useTransition();
+  const [isPasswordShowing, setPasswordShowing] = useState(false);
 
   useEffect(() => {
     let toastId: string | undefined;
@@ -96,12 +98,21 @@ const LoginForm = () => {
         </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            placeholder="Enter your password"
-            type="password"
-            {...register("password", { required: true, minLength: 6 })}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              placeholder="Enter your password"
+              className="pr-6"
+              type={isPasswordShowing ? "text" : "password"}
+              {...register("password", { required: true, minLength: 6 })}
+            />
+            <div
+              className="cursor-pointer absolute top-1/2 -translate-y-1/2 right-1 select-none text-xl"
+              onClick={() => setPasswordShowing((pre) => !pre)}
+            >
+              {isPasswordShowing ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+            </div>
+          </div>
           {errors.password && (
             <span className="text-red-500 text-base mt-1">
               Enter your valid password.
