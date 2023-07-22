@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import CreatePostForm from "./CreatePostForm";
+import StatusUpdate from "./StatusUpdate";
 
 type Props = {
   post: Post;
@@ -20,6 +21,7 @@ const DropdownMenuItems = ({ post }: Props) => {
   const isMe = author._id === _id;
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [isStatus, setIsStatus] = useState(false);
   const { refresh } = useRouter();
 
   useEffect(() => {
@@ -102,7 +104,10 @@ const DropdownMenuItems = ({ post }: Props) => {
           {isMe && (
             <div
               className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+                setIsStatus(false);
+              }}
             >
               Edit post
             </div>
@@ -110,13 +115,24 @@ const DropdownMenuItems = ({ post }: Props) => {
           {role === "admin" && (
             <div
               className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+                setIsStatus(true);
+              }}
             >
               Update Status
             </div>
           )}
-          <Modal open={open} setOpen={setOpen} heading="Edit post">
-            <CreatePostForm setOpen={setOpen} post={post} />
+          <Modal
+            open={open}
+            setOpen={setOpen}
+            heading={isStatus ? "Status Update" : "Edit post"}
+          >
+            {isStatus ? (
+              <StatusUpdate setOpen={setOpen} post={post} />
+            ) : (
+              <CreatePostForm setOpen={setOpen} post={post} />
+            )}
           </Modal>
         </>
       )}

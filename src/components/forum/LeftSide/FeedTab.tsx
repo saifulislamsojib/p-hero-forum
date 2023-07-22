@@ -34,7 +34,7 @@ const FeedTab = () => {
   const search = useSearchParams().get("category");
   return (
     <div className="overflow-x-auto">
-      <div className="flex items-center gap-2 sm:gap-3 mt-5 border-b min-w-[401px]">
+      <div className="flex items-center gap-1 sm:gap-3 mt-5 border-b min-w-[400px]">
         {tabItems.map(({ id, title, query }) => (
           <Link
             href={{ pathname: "/", query: query ? { category: query } : {} }}

@@ -23,6 +23,7 @@ import Post from "@/types/Post";
 import CommentBox from "./CommentBox";
 import DropdownMenuItems from "./DropdownMenuItems";
 import Upvote from "./Upvote";
+import CommentModal from "./CommentModal";
 
 type Props = {
   post: Post;
@@ -37,7 +38,8 @@ const FeedSinglePost = ({ post }: Props) => {
     imagesOrVideos,
     commentsCount,
     priority,
-    upvote,
+    _id,
+    commentOff,
   } = post;
 
   return (
@@ -117,24 +119,25 @@ const FeedSinglePost = ({ post }: Props) => {
         />
       )}
       <div className="m-2 flex items-center justify-between">
-        <Button
-          variant="link"
-          className="flex items-center font-medium text-md gap-2"
-        >
-          <TbMessage className="text-lg" /> {commentsCount} Comments
-        </Button>
+        <CommentModal
+          postId={_id}
+          commentsCount={commentsCount}
+          commentOff={commentOff}
+        />
         <Upvote post={post} />
       </div>
-      <hr />
-      <CardFooter className="mt-3">
-        <div className="flex w-full items-center gap-3">
-          <Avatar className="cursor-pointer text-2xl">
-            <AvatarImage alt="user" />
-            <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
-          </Avatar>
-          <CommentBox />
-        </div>
-      </CardFooter>
+      {!commentOff && <hr />}
+      {!commentOff && (
+        <CardFooter className="mt-3">
+          <div className="flex w-full items-center gap-3">
+            <Avatar className="cursor-pointer text-2xl">
+              <AvatarImage alt="user" />
+              <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
+            </Avatar>
+            <CommentBox postId={_id} />
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 };

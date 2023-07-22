@@ -57,10 +57,12 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     handleSubmit,
     getValues,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
       imagesOrVideos: imagesOrVideos || [],
+      category: category,
     },
   });
 
@@ -69,6 +71,7 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
 
   const [isPending, startTransition] = useTransition();
   const { refresh } = useRouter();
+  const [selectResetKey, setSelectResetKey] = useState(1);
 
   useEffect(() => {
     let toastId: string | undefined;
@@ -100,24 +103,47 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     imagesOrVideos,
   }) => {
     if (!categoryError) {
-      const toastId = toast.loading("Posting...", { id: "Posting..." });
+      const toastId = toast.loading(post._id ? "Updating..." : "Posting...", {
+        id: "Posting",
+      });
       try {
-        const { message } = await postService.createPost({
-          postBody,
-          category,
-          imagesOrVideos,
-          tags: selectedTags,
-        });
+        let response: { message: string; isUpdated?: boolean };
+        if (post._id) {
+          response = await postService.updatePost(post._id, {
+            postBody,
+            category,
+            imagesOrVideos,
+            tags: selectedTags,
+          });
+        } else {
+          response = await postService.createPost({
+            postBody,
+            category,
+            imagesOrVideos,
+            tags: selectedTags,
+          });
+        }
+
         setOpen(false);
-        startTransition(() => {
-          refresh();
+        reset();
+        setSelectResetKey((preKey) => preKey + 1);
+        setSelectedTags(tags || [tagsItems[0]]);
+        if ((post._id && response.isUpdated) || !post._id) {
+          startTransition(() => {
+            refresh();
+            toast.dismiss(toastId);
+            toast.success(response.message, { id: "Posted" });
+          });
+        } else {
           toast.dismiss(toastId);
-          toast.success(message, { id: "Posting..." });
-        });
+          toast.error(response.message, { id: "NotPosted" });
+        }
       } catch (error) {
         console.log(error);
         toast.dismiss(toastId);
-        toast.error("Posting failed!", { id: "Posting..." });
+        toast.error(post._id ? "Update failed" : "Posting failed!", {
+          id: "NotPosted",
+        });
       }
     }
   };
@@ -160,7 +186,7 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
   };
 
   return (
-    <form className="" onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex gap-2">
         <Avatar className="cursor-pointer text-2xl">
           <AvatarImage alt="user" />
@@ -198,6 +224,8 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
             options={categories}
             menuPlacement="top"
             isSearchable={false}
+            key={selectResetKey}
+            isError={categoryError}
           />
         </div>
         <div className="w-full">

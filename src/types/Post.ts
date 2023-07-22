@@ -23,6 +23,7 @@ interface Post extends PostBody {
   upvote: number;
   commentsCount: number;
   priority: "High" | "Medium" | "Low";
+  note?: string;
 }
 
 export default Post;

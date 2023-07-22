@@ -15,6 +15,7 @@ const Modal = ({
   children,
   open,
   setOpen,
+  onClose,
   className,
   heading,
   ...props
@@ -47,7 +48,10 @@ const Modal = ({
 
   return (
     <dialog
-      onClose={() => setOpen(false)}
+      onClose={(e) => {
+        setOpen(false);
+        onClose?.(e);
+      }}
       className={cn(
         "backdrop:bg-gray-500/50 backdrop:backdrop-blur-[1px] w-[98%] max-w-[600px] p-3 md:p-4 rounded duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%] z-50 backdrop:z-50 shadow-md",
         className

@@ -9,8 +9,18 @@ class PostService {
     return requests.post(process.env.NEXT_PUBLIC_CLOUDINARY_URL!, formData);
   }
 
-  updatePost(id: string, body: PostBody): Promise<{ message: string }> {
+  updatePost(
+    id: string,
+    body: PostBody
+  ): Promise<{ message: string; isUpdated: boolean }> {
     return requests.patch(`/api/post/${id}`, body);
+  }
+
+  updateAdminPost(
+    id: string,
+    body: Pick<Post, "category" | "status" | "note" | "tags" | "priority">
+  ): Promise<{ message: string; isUpdated: boolean }> {
+    return requests.patch(`/api/post/updateByAdmin/${id}`, body);
   }
 
   updateStatusPost(
