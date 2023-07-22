@@ -3,13 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import Select, { Option } from "@/components/ui/select";
 import {
   userFailure,
   userLoading,
@@ -27,10 +21,20 @@ type Inputs = {
   name: string;
   email: string;
   role: string;
-  batch: string;
+  batch?: string;
   password: string;
   confirmPassword: string;
 };
+
+const roles = ["User", "Admin"].map((role) => ({
+  label: role,
+  value: role.toLowerCase(),
+}));
+
+const batches = [...Array(8)].map((_, index) => ({
+  label: `Batch ${index + 1}`,
+  value: `batch-${index + 1}`,
+}));
 
 const SignupForm = () => {
   const {
@@ -69,6 +73,20 @@ const SignupForm = () => {
       }
     };
   }, [isPending]);
+
+  const handleRoleChange = (option: unknown) => {
+    const { value } = option as Option;
+    setValue("role", value);
+    setIsUser(value === "user");
+    if (value === "user") {
+      setValue("batch", undefined);
+    }
+  };
+
+  const handleBatchChange = (option: unknown) => {
+    const { value } = option as Option;
+    setValue("batch", value);
+  };
 
   const onSubmit: SubmitHandler<Inputs> = async ({
     name,
@@ -147,40 +165,24 @@ const SignupForm = () => {
           <Label htmlFor="role">Role</Label>
 
           <Select
-            defaultValue="user"
-            onValueChange={(value) => {
-              setValue("role", value);
-              setIsUser(value === "user");
-            }}
-          >
-            <SelectTrigger id="role">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              <SelectItem value="user">User</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select a role"
+            onChange={handleRoleChange}
+            defaultValue={roles[0]}
+            options={roles}
+            isSearchable={false}
+          />
         </div>
         {isUser && (
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="batch">Batch</Label>
 
             <Select
-              defaultValue="batch-8"
-              onValueChange={(value) => setValue("batch", value)}
-            >
-              <SelectTrigger id="batch">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                {[...Array(8)].map((_, i) => (
-                  <SelectItem key={i} value={`batch-${i + 1}`}>
-                    Batch {i + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              placeholder="Select a batch"
+              onChange={handleBatchChange}
+              defaultValue={batches.at(-1)}
+              options={batches}
+              isSearchable={false}
+            />
           </div>
         )}
         <div className="flex flex-col space-y-1.5">

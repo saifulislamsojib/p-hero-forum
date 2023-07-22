@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { ComponentProps, MouseEvent, useEffect, useRef } from "react";
+import { Toaster } from "react-hot-toast";
 import { MdOutlineClose } from "react-icons/md";
 
 interface DialogProps extends Omit<ComponentProps<"dialog">, "open"> {
@@ -67,6 +68,7 @@ const Modal = ({
       </div>
       <hr className="my-3" />
       {children}
+      <Toaster />
     </dialog>
   );
 };

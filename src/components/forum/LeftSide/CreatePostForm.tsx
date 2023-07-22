@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import Select, { Option } from "@/components/ui/select";
 import { useUser } from "@/redux/hooks";
 import postService from "@/services/PostService";
 import Post from "@/types/Post";
@@ -11,7 +12,6 @@ import { ChangeEvent, useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { BsCameraVideo, BsCardImage } from "react-icons/bs";
-import Select from "react-select";
 
 const categories = [
   "Github",
@@ -100,7 +100,7 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     imagesOrVideos,
   }) => {
     if (!categoryError) {
-      const toastId = toast.loading("Posting...");
+      const toastId = toast.loading("Posting...", { id: "Posting..." });
       try {
         const { message } = await postService.createPost({
           postBody,
@@ -112,12 +112,12 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
         startTransition(() => {
           refresh();
           toast.dismiss(toastId);
-          toast.success(message);
+          toast.success(message, { id: "Posting..." });
         });
       } catch (error) {
         console.log(error);
         toast.dismiss(toastId);
-        toast.error("Posting failed!");
+        toast.error("Posting failed!", { id: "Posting..." });
       }
     }
   };
@@ -128,7 +128,8 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     }
   };
 
-  const handleCategoryChange = (value: string) => {
+  const handleCategoryChange = (option: unknown) => {
+    const { value } = option as Option;
     setValue("category", value);
     setCategoryError(false);
   };
@@ -182,31 +183,9 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
       </div>
       <div className="my-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="w-full">
-          {/* <Select onValueChange={handleCategoryChange} defaultValue={category}>
-            <SelectTrigger
-              id="category"
-              className={
-                categoryError
-                  ? "border border-destructive focus:border-destructive"
-                  : ""
-              }
-            >
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => {
-                const value = category.toLowerCase().split(" ").join("-");
-                return (
-                  <SelectItem value={value} key={value}>
-                    {category}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select> */}
           <Select
             placeholder="Select a category"
-            onInputChange={handleCategoryChange}
+            onChange={handleCategoryChange}
             defaultValue={
               category
                 ? {
@@ -217,6 +196,8 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
                 : undefined
             }
             options={categories}
+            menuPlacement="top"
+            isSearchable={false}
           />
         </div>
         <div className="w-full">

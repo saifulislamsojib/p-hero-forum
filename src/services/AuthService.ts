@@ -9,7 +9,7 @@ interface LoginBody {
 interface SignupBody extends LoginBody {
   name: string;
   role: string;
-  batch: string;
+  batch?: string;
 }
 
 class AuthService {
