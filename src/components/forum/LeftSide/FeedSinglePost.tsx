@@ -11,19 +11,19 @@ import Image from "next/image";
 import { BsBookmark, BsThreeDotsVertical } from "react-icons/bs";
 import { FiClock } from "react-icons/fi";
 import { MdBatchPrediction, MdOutlineDateRange } from "react-icons/md";
-import { TbMessage } from "react-icons/tb";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Post from "@/types/Post";
+import dynamic from "next/dynamic";
 import CommentBox from "./CommentBox";
 import DropdownMenuItems from "./DropdownMenuItems";
 import Upvote from "./Upvote";
-import CommentModal from "./CommentModal";
+
+const CommentModal = dynamic(() => import("./CommentModal"), { ssr: false });
 
 type Props = {
   post: Post;
@@ -50,7 +50,7 @@ const FeedSinglePost = ({ post }: Props) => {
             <div className="flex gap-2">
               <Avatar className="cursor-pointer text-2xl">
                 <AvatarImage alt="user" />
-                <AvatarFallback>{name[0]}</AvatarFallback>
+                <AvatarFallback>{name[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
                 <h4 className="scroll-m-20 text-md font-medium tracking-tight">
@@ -132,7 +132,7 @@ const FeedSinglePost = ({ post }: Props) => {
           <div className="flex w-full items-center gap-3">
             <Avatar className="cursor-pointer text-2xl">
               <AvatarImage alt="user" />
-              <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
+              <AvatarFallback>{name?.[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <CommentBox postId={_id} />
           </div>

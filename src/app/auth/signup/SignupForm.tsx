@@ -191,7 +191,7 @@ const SignupForm = () => {
             <Input
               id="password"
               placeholder="Enter password"
-              type="password"
+              type={isPasswordShowing ? "text" : "password"}
               autoComplete="new-password"
               className="pr-6"
               {...register("password", { required: true, minLength: 6 })}
@@ -215,7 +215,7 @@ const SignupForm = () => {
             <Input
               id="confirmPassword"
               placeholder="Enter confirm password"
-              type="password"
+              type={isPasswordShowing ? "text" : "password"}
               autoComplete="new-password"
               className="pr-6"
               {...register("confirmPassword", {

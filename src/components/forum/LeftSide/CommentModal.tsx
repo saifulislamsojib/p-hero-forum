@@ -9,6 +9,7 @@ import Comment from "@/types/Comment";
 import { useMemo, useState } from "react";
 import { TbMessage } from "react-icons/tb";
 import CommentBox from "./CommentBox";
+import CommentLoading from "./CommentLoading";
 import SingleComment from "./SingleComment";
 
 type Props = {
@@ -61,7 +62,7 @@ const CommentModal = ({ commentsCount, postId, commentOff }: Props) => {
       >
         <div>
           <div className="text-center my-5 text-gray-500">
-            {loading && <h3>Loading...</h3>}
+            {loading && <CommentLoading />}
             {!loading && comments.length === 0 && <h3>No Comments Founds</h3>}
           </div>
           {!loading && (
@@ -75,7 +76,7 @@ const CommentModal = ({ commentsCount, postId, commentOff }: Props) => {
             <div className="flex w-full items-center gap-3">
               <Avatar className="cursor-pointer text-2xl">
                 <AvatarImage alt="user" />
-                <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
+                <AvatarFallback>{name?.[0].toUpperCase()}</AvatarFallback>
               </Avatar>
               <CommentBox postId={postId} setComments={setComments} />
             </div>

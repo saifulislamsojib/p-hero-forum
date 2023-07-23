@@ -59,7 +59,6 @@ const StatusUpdate = ({ setOpen, post }: Props) => {
   const {
     register,
     handleSubmit,
-    getValues,
     setValue,
     reset,
     formState: { errors },

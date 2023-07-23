@@ -190,7 +190,7 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
       <div className="flex gap-2">
         <Avatar className="cursor-pointer text-2xl">
           <AvatarImage alt="user" />
-          <AvatarFallback>{name?.[0]}</AvatarFallback>
+          <AvatarFallback>{name?.[0].toUpperCase()}</AvatarFallback>
         </Avatar>
         <h4 className="scroll-m-20 text-md font-medium tracking-tight">
           {name}

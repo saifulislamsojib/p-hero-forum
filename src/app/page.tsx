@@ -2,6 +2,10 @@ import CreatePost from "@/components/forum/LeftSide/CreatePost";
 import FeedPosts from "@/components/forum/LeftSide/FeedPosts";
 import FeedTab from "@/components/forum/LeftSide/FeedTab";
 import PostFeedLoading from "@/components/forum/LeftSide/PostFeedLoading";
+import PostCounts from "@/components/forum/RightSide/PostCounts";
+import PostCountsLoading from "@/components/forum/RightSide/PostCountsLoading";
+import TrendingIssues from "@/components/forum/RightSide/TrendingIssues";
+import TrendingIssuesLoading from "@/components/forum/RightSide/TrendingIssuesLoading";
 import PageProps from "@/types/PageProps";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -22,7 +26,14 @@ const HomePage = ({
           <FeedPosts category={category} />
         </Suspense>
       </div>
-      <div className="lg:col-span-4">Top Issue/Trending Issue</div>
+      <div className="lg:col-span-4">
+        <Suspense fallback={<TrendingIssuesLoading />}>
+          <TrendingIssues />
+        </Suspense>
+        <Suspense fallback={<PostCountsLoading />}>
+          <PostCounts />
+        </Suspense>
+      </div>
     </div>
   );
 };

@@ -23,7 +23,7 @@ const CreatePost = () => {
           <div className="flex items-center gap-3">
             <Avatar className="cursor-pointer text-2xl">
               <AvatarImage alt="user" />
-              <AvatarFallback>{name?.[0] || "S"}</AvatarFallback>
+              <AvatarFallback>{name?.[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <input
               type="text"

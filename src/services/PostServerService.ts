@@ -9,6 +9,19 @@ class PostServerService {
     }
     return serverRequests.get(path);
   }
+
+  getTrendingIssues(): Promise<{ posts: Post[] }> {
+    return serverRequests.get("/api/post/trending");
+  }
+
+  getPostCount(): Promise<{
+    allPostCount: number;
+    resolvedPostCount: number;
+    unresolvedPostCount: number;
+    rejectedPostCount: number;
+  }> {
+    return serverRequests.get("/api/post/counts");
+  }
 }
 
 const postServerService = new PostServerService();

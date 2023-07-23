@@ -130,7 +130,7 @@ const Navbar = () => {
               <Avatar className="cursor-pointer">
                 <AvatarImage alt="user" title={user.name} />
                 <AvatarFallback title={user.name}>
-                  {user.name[0]}
+                  {user.name?.[0].toUpperCase()}
                 </AvatarFallback>
               </Avatar>
             )}
