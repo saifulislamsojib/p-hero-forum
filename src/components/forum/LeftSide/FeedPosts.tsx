@@ -6,7 +6,7 @@ type Props = {
   category: string;
 };
 
-const getPosts = cache((category: string) =>
+const getPosts = cache((category?: string) =>
   postServerService.getFeedPost(category)
 );
 

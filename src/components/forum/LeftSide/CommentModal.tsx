@@ -60,7 +60,7 @@ const CommentModal = ({ commentsCount, postId, commentOff }: Props) => {
         onClose={onClose}
       >
         <div>
-          <div className="text-center my-5 text-muted text-gray-500">
+          <div className="text-center my-5 text-gray-500">
             {loading && <h3>Loading...</h3>}
             {!loading && comments.length === 0 && <h3>No Comments Founds</h3>}
           </div>

@@ -76,7 +76,7 @@ const CommentBox = ({ postId, mainCommentId, setComments }: Props) => {
       <input
         type="text"
         className="bg-slate-200 w-full py-2 px-4 rounded-full focus:outline-none"
-        placeholder="Post your problems here"
+        placeholder="Write your comment here..."
         name="message"
       />
     </form>

@@ -1,8 +1,10 @@
 import CreatePost from "@/components/forum/LeftSide/CreatePost";
 import FeedPosts from "@/components/forum/LeftSide/FeedPosts";
 import FeedTab from "@/components/forum/LeftSide/FeedTab";
+import PostFeedLoading from "@/components/forum/LeftSide/PostFeedLoading";
 import PageProps from "@/types/PageProps";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Home | P.H Forum",
@@ -16,7 +18,9 @@ const HomePage = ({
       <div className="lg:col-span-7">
         <CreatePost />
         <FeedTab />
-        <FeedPosts category={category} />
+        <Suspense fallback={<PostFeedLoading />}>
+          <FeedPosts category={category} />
+        </Suspense>
       </div>
       <div className="lg:col-span-4">Top Issue/Trending Issue</div>
     </div>
