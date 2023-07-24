@@ -26,7 +26,7 @@ const HomePage = ({
           <FeedPosts category={category} />
         </Suspense>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-4 order-1 lg:order-2">
         <Suspense fallback={<TrendingIssuesLoading />}>
           <TrendingIssues />
         </Suspense>

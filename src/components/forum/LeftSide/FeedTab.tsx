@@ -1,14 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import Filter from "./Filter";
 
 const tabItems = [
   {
@@ -56,21 +50,7 @@ const FeedTab = () => {
           </Link>
         ))}
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none" asChild>
-          <Button className="mr-1" variant="outline">
-            Filter
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent sideOffset={10} align="end" className="p-3">
-          <DropdownMenuItem>By date</DropdownMenuItem>
-          <DropdownMenuItem>By days</DropdownMenuItem>
-          <DropdownMenuItem>By status</DropdownMenuItem>
-          <DropdownMenuItem>By batch</DropdownMenuItem>
-          <DropdownMenuItem>By Category</DropdownMenuItem>
-          <DropdownMenuItem>By Tag</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Filter />
     </div>
   );
 };

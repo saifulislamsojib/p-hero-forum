@@ -44,7 +44,7 @@ const Select = ({ components, isError, name, ...props }: SelectProps) => {
       }),
       control: (base, state) => ({
         ...base,
-        height: "42px",
+        height: "40px",
         borderRadius: "8px",
         borderColor: state.isFocused ? "#a31dae" : isError ? "red" : "#e2e8f0",
         boxShadow: "none",
