@@ -13,6 +13,8 @@ export const POST = async (req: Request) => {
       value: `Bearer ${data.token}`,
       secure: true,
       httpOnly: true,
+      maxAge: 182 * 24 * 60 * 60,
+      expires: 182 * 24 * 60 * 60,
     });
   }
   return NextResponse.json(data);

@@ -5,7 +5,14 @@ class PostService {
   createPost(body: PostBody): Promise<{ message: string }> {
     return requests.post("/api/post", body);
   }
-  imageOrVideoUpload(formData: FormData): Promise<{ secure_url: string }> {
+  imageOrVideoUpload(formData: FormData): Promise<{
+    secure_url: string;
+    asset_id: string;
+    width: number;
+    height: number;
+    format: string;
+    resource_type: string;
+  }> {
     return requests.post(process.env.NEXT_PUBLIC_CLOUDINARY_URL!, formData);
   }
 

@@ -57,7 +57,7 @@ const FeedTab = () => {
         ))}
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none">
+        <DropdownMenuTrigger className="focus:outline-none" asChild>
           <Button className="mr-1" variant="outline">
             Filter
           </Button>

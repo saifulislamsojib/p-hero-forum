@@ -7,11 +7,13 @@ import Select, { Option } from "@/components/ui/select";
 import { useUser } from "@/redux/hooks";
 import postService from "@/services/PostService";
 import Post from "@/types/Post";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState, useTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { BsCameraVideo, BsCardImage } from "react-icons/bs";
+import { MdOutlineClose } from "react-icons/md";
 
 const categories = [
   "Github",
@@ -39,7 +41,6 @@ const tagsItems = ["Help", "Feedback", "Github", "Deployment", "Es6", "React"];
 type Inputs = {
   postBody: string;
   category: string;
-  imagesOrVideos: string[];
 };
 
 type Props = {
@@ -47,10 +48,24 @@ type Props = {
   post?: Post;
 };
 
+type Preview = { src: string; lastModified?: number };
+
 const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
   const { name } = useUser().user;
 
-  const { postBody, category, imagesOrVideos, tags } = post;
+  const { postBody, category, tags } = post;
+
+  const [previews, setPreviews] = useState<Preview[]>(() => {
+    if (post.imagesOrVideos) {
+      return post.imagesOrVideos.map(({ src }) => ({ src }));
+    }
+    return [];
+  });
+
+  const [imagesVideos, setImagesVideos] = useState<File[]>([]);
+  const [imagesOrVideos, setImagesOrVideos] = useState(
+    post.imagesOrVideos || []
+  );
 
   const {
     register,
@@ -61,7 +76,6 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
-      imagesOrVideos: imagesOrVideos || [],
       category: category,
     },
   });
@@ -97,37 +111,71 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     });
   };
 
-  const onSubmit: SubmitHandler<Inputs> = async ({
-    postBody,
-    category,
-    imagesOrVideos,
-  }) => {
+  const onSubmit: SubmitHandler<Inputs> = async ({ postBody, category }) => {
     if (!categoryError) {
       const toastId = toast.loading(post._id ? "Updating..." : "Posting...", {
         id: "Posting",
       });
       try {
+        let resources = imagesOrVideos;
+        if (imagesVideos.length) {
+          const toastId = toast.loading("Uploading...", {
+            id: "Uploading",
+          });
+          const promises = imagesVideos.map((file) => {
+            const formData = new FormData();
+            formData.append(
+              "upload_preset",
+              process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!
+            );
+            formData.append("file", file);
+            return postService.imageOrVideoUpload(formData);
+          });
+          const imageOrVideoData = await Promise.all(promises);
+          resources = imageOrVideoData.map(
+            ({
+              secure_url,
+              asset_id,
+              width,
+              height,
+              format,
+              resource_type,
+            }) => ({
+              asset_id,
+              width,
+              height,
+              src: secure_url,
+              format,
+              resource_type,
+            })
+          );
+
+          toast.dismiss(toastId);
+        }
+
         let response: { message: string; isUpdated?: boolean };
         if (post._id) {
           response = await postService.updatePost(post._id, {
             postBody,
             category,
-            imagesOrVideos,
+            imagesOrVideos: resources,
             tags: selectedTags,
           });
         } else {
           response = await postService.createPost({
             postBody,
             category,
-            imagesOrVideos,
+            imagesOrVideos: resources,
             tags: selectedTags,
           });
         }
-
         setOpen(false);
         reset();
         setSelectResetKey((preKey) => preKey + 1);
         setSelectedTags(tags || [tagsItems[0]]);
+        setImagesVideos([]);
+        setImagesOrVideos([]);
+        setPreviews([]);
         if ((post._id && response.isUpdated) || !post._id) {
           startTransition(() => {
             refresh();
@@ -160,28 +208,36 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
     setCategoryError(false);
   };
 
-  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.length) return;
-    const toastId = toast.loading("Uploading...");
-    try {
-      const promises = Array.from(e.target.files).map((file) => {
-        const formData = new FormData();
-        formData.append(
-          "upload_preset",
-          process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!
-        );
-        formData.append("file", file);
-        return postService.imageOrVideoUpload(formData);
-      });
-      const imageOrVideoData = await Promise.all(promises);
-      toast.dismiss(toastId);
-      toast.success("Uploaded  successfully!");
-      const urls = imageOrVideoData.map(({ secure_url }) => secure_url);
-      setValue("imagesOrVideos", urls);
-    } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId);
-      toast.success("Not Uploaded!");
+  const handleImagePreview = async (e: ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (!files?.length) return;
+    const fileList = Array.from(files).map((file) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result;
+        const preview = {
+          src: imageUrl as string,
+          lastModified: file.lastModified,
+        };
+        setPreviews((pre) => [...pre, preview]);
+      };
+
+      reader.readAsDataURL(file);
+      return file;
+    });
+    setImagesVideos(fileList);
+  };
+
+  const cancelImage = (image: Preview) => {
+    setPreviews((pre) => pre.filter(({ src }) => src !== image.src));
+    if (post.imagesOrVideos) {
+      setImagesOrVideos((pre) => pre.filter(({ src }) => src !== image.src));
+    }
+    if (imagesVideos.length) {
+      setImagesVideos((pre) =>
+        pre.filter(({ lastModified }) => lastModified !== image.lastModified)
+      );
     }
   };
 
@@ -207,6 +263,23 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
           defaultValue={postBody}
         ></textarea>
       </div>
+      <div className="my-2 flex items-center gap-4">
+        {previews.map((image, idx) => (
+          <div key={idx} className="relative">
+            <Image
+              height={100}
+              width={100}
+              className="h-[100px] w-[100px] rounded object-cover border"
+              src={image.src}
+              alt="post preview"
+            />
+            <MdOutlineClose
+              className="text-2xl cursor-pointer bg-slate-300 rounded-full p-1 w-6 h-6 absolute top-1 right-1"
+              onClick={() => cancelImage(image)}
+            />
+          </div>
+        ))}
+      </div>
       <div className="my-2 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
         <div className="w-full">
           <Select
@@ -230,7 +303,7 @@ const CreatePostForm = ({ setOpen, post = {} as Post }: Props) => {
         </div>
         <div className="w-full">
           <input
-            onChange={handleImageUpload}
+            onChange={handleImagePreview}
             type="file"
             multiple
             className="hidden"

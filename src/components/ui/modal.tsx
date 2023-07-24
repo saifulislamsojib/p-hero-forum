@@ -66,7 +66,7 @@ const Modal = ({
           {heading}
         </h3>
         <MdOutlineClose
-          className="text-2xl cursor-pointer"
+          className="text-2xl cursor-pointer hover:bg-slate-300 rounded-full p-1 w-8 h-8"
           onClick={() => setOpen(false)}
         />
       </div>
