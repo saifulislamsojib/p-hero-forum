@@ -75,7 +75,6 @@ const Navbar = () => {
       dispatch(userFailure((error as Error).message));
       toast.dismiss(toastId);
       toast.error("Not Logged out!");
-      console.log(error);
     }
   };
 

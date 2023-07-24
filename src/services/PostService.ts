@@ -1,5 +1,5 @@
 import Post, { PostBody } from "@/types/Post";
-import { requests } from "./httpService";
+import { requests, simpleRequest } from "./httpService";
 
 class PostService {
   createPost(body: PostBody): Promise<{ message: string }> {
@@ -13,7 +13,10 @@ class PostService {
     format: string;
     resource_type: string;
   }> {
-    return requests.post(process.env.NEXT_PUBLIC_CLOUDINARY_URL!, formData);
+    return simpleRequest.post(
+      process.env.NEXT_PUBLIC_CLOUDINARY_URL!,
+      formData
+    );
   }
 
   updatePost(

@@ -15,11 +15,10 @@ const UserProvider = ({ children }: LayoutProps) => {
     (async () => {
       try {
         dispatch(userLoading());
-        const { auth, message } = await authService.currentUser();
-        if (!auth) {
-          throw new Error(message);
+        const { auth } = await authService.currentUser();
+        if (auth) {
+          dispatch(userLogin(auth));
         }
-        dispatch(userLogin(auth));
       } catch (error) {
         dispatch(userFailure((error as Error).message));
       }

@@ -9,10 +9,10 @@ export const middleware = async (request: NextRequest) => {
     if (!cookie || !cookie.startsWith("Bearer")) {
       throw new Error("Invalid token");
     }
-    const res = await fetch(`${process.env.API_BASE_URL}/auth`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
       method: "GET",
       headers: {
-        Authorization: cookie,
+        Cookie: request.cookies.toString(),
       },
     });
     await res.json();
