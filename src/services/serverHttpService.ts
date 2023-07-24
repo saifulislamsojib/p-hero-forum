@@ -6,7 +6,7 @@ import getHttpService from "./httpService";
 const serverHttpService = getHttpService();
 
 serverHttpService.instance.interceptors.request.use((config) => {
-  config.headers.Cookie = cookies().toString();
+  config.headers.Authorization = cookies().get("jwtToken")?.value;
   return config;
 });
 

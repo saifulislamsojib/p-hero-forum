@@ -21,7 +21,7 @@ class AuthService {
       }
     | { error: string }
   > {
-    return requests.post("/auth/login", body);
+    return requests.post("/api/auth/login", body);
   }
 
   signup(body: SignupBody): Promise<
@@ -32,20 +32,20 @@ class AuthService {
       }
     | { errors: Partial<SignupBody> }
   > {
-    return requests.post("/auth/registration", body);
+    return requests.post("/api/auth/signup", body);
   }
 
-  logout(): Promise<{
-    message: string;
-  }> {
-    return fetch("/api/auth").then((res) => res.json());
+  logout() {
+    return requests.get<{
+      message: string;
+    }>("/api/auth/logout");
   }
 
   currentUser(): Promise<{
     auth?: User;
     message?: string;
   }> {
-    return requests.get("/auth");
+    return requests.get("/api/auth");
   }
 }
 
