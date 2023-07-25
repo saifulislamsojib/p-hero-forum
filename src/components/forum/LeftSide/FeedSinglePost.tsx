@@ -56,6 +56,28 @@ const FeedSinglePost = ({ post }: Props) => {
     sizes = "(max-width: 1024px) 50vw, 80vw";
   }
 
+  const referenceDate = new Date(createdAt);
+  const currentDate = moment();
+  const diffInSeconds = currentDate.diff(referenceDate, "seconds");
+
+  let formattedDate: string;
+  if (diffInSeconds < 5) {
+    formattedDate = "just now";
+  } else if (diffInSeconds < 60) {
+    formattedDate = `${diffInSeconds} seconds ago`;
+  } else if (diffInSeconds < 3600) {
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    formattedDate =
+      diffInMinutes === 1 ? `1 minute ago` : `${diffInMinutes} minutes ago`;
+  } else if (diffInSeconds < 86400) {
+    const diffInHours = Math.floor(diffInSeconds / 3600);
+    formattedDate =
+      diffInHours === 1 ? `1 hour ago` : `${diffInHours} hours ago`;
+  } else {
+    const diffInDays = Math.floor(diffInSeconds / 86400);
+    formattedDate = diffInDays === 1 ? `1 day ago` : `${diffInDays} days ago`;
+  }
+
   return (
     <Card className="bg-slate-100 mb-5 shadow">
       <CardHeader>
@@ -73,7 +95,7 @@ const FeedSinglePost = ({ post }: Props) => {
                 <div className="flex gap-2 items-center text-sm text-muted-foreground">
                   <div className="flex gap-1 items-center">
                     <FiClock />
-                    <span>{moment(createdAt).startOf("hour").fromNow()}</span>
+                    <span>{formattedDate}</span>
                   </div>
                   <div className="flex gap-1 items-center">
                     <MdOutlineDateRange />
