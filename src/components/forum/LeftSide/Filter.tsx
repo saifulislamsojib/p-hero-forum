@@ -135,6 +135,8 @@ const Filter = () => {
 
   const handleClear = () => {
     push("/");
+    setFilters({});
+    setDateRange([null, null]);
   };
 
   return (
