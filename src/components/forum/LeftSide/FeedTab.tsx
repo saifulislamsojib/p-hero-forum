@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import Filter from "./Filter";
+import LoadFilter from "./LoadFilter";
 
 const tabItems = [
   {
@@ -50,7 +50,7 @@ const FeedTab = () => {
           </Link>
         ))}
       </div>
-      <Filter />
+      <LoadFilter />
     </div>
   );
 };

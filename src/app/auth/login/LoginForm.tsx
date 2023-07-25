@@ -105,6 +105,7 @@ const LoginForm = () => {
               className="pr-6"
               type={isPasswordShowing ? "text" : "password"}
               {...register("password", { required: true, minLength: 6 })}
+              autoComplete="current-password"
             />
             <div
               className="cursor-pointer absolute top-1/2 -translate-y-1/2 right-1 select-none text-xl"
