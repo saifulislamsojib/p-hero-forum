@@ -4586,6 +4586,11 @@ react-style-singleton@^2.2.1:
     invariant "^2.2.4"
     tslib "^2.0.0"
 
+react-text-modifier@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-text-modifier/-/react-text-modifier-1.0.0.tgz#0f44221d65162deb5e453400bd405412e1185046"
+  integrity sha512-1phMy5NyCjLSrVGKJVrpYnKpeJ1nxz2UMRN9XYUTN/jHUlpcG/Ijnhgm+vnOsFgrse/pCp5nI7iDtYeO+7XadA==
+
 react-transition-group@^4.3.0:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"

@@ -1,12 +1,45 @@
+import { SearchParams } from "@/types/PageProps";
 import Post from "@/types/Post";
 import { serverRequests } from "./serverHttpService";
 
 class PostServerService {
-  getFeedPost(category?: string): Promise<{ posts: Post[] }> {
-    let path = "/api/post";
+  getFeedPost(searchParams: SearchParams): Promise<{ posts: Post[] }> {
+    const url = new URLSearchParams();
+    const {
+      category,
+      status,
+      batch,
+      tag,
+      days,
+      startDay,
+      endDay,
+      problemCategory,
+    } = searchParams;
+
     if (category) {
-      path += `?category=${category}`;
+      url.append("category", category);
     }
+    if (status) {
+      url.append("status", status);
+    }
+    if (batch) {
+      url.append("batch", batch);
+    }
+    if (problemCategory) {
+      url.append("problemCategory", problemCategory);
+    }
+    if (tag) {
+      url.append("tag", tag);
+    }
+    if (days) {
+      url.append("days", days);
+    }
+    if (startDay && endDay) {
+      url.append("startDay", startDay);
+      url.append("endDay", endDay);
+    }
+
+    let path = `/api/post?${decodeURI(url.toString())}`;
     return serverRequests.get(path);
   }
 

@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import TextModifier from "@/components/ui/text-modifier";
 import { cn } from "@/lib/utils";
 import Post from "@/types/Post";
 import dynamic from "next/dynamic";
@@ -118,7 +119,7 @@ const FeedSinglePost = ({ post }: Props) => {
         </div>
       </CardHeader>
       <CardContent>
-        <p>{postBody}</p>
+        <TextModifier as="p" text={postBody} />
       </CardContent>
       {imagesOrVideos?.length > 0 && (
         <div className={cn(`grid gap-2 ${grid}`)}>

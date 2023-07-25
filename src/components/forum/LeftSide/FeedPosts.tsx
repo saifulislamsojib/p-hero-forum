@@ -1,17 +1,18 @@
 import postServerService from "@/services/PostServerService";
+import { SearchParams } from "@/types/PageProps";
 import { cache } from "react";
 import FeedSinglePost from "./FeedSinglePost";
 
 type Props = {
-  category: string;
+  searchParams: SearchParams;
 };
 
-const getPosts = cache((category?: string) =>
-  postServerService.getFeedPost(category)
+const getPosts = cache((searchParams: SearchParams) =>
+  postServerService.getFeedPost(searchParams)
 );
 
-const FeedPosts = async ({ category }: Props) => {
-  const { posts } = await getPosts(category);
+const FeedPosts = async ({ searchParams }: Props) => {
+  const { posts } = await getPosts(searchParams);
 
   return (
     <div className="mt-5">

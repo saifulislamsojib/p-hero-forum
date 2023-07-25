@@ -121,7 +121,7 @@ const Filter = () => {
       url.append("tag", filters.tag || (tagSearch as string));
     }
     if (filters.days || daysSearch) {
-      url.append("tag", filters.days || (daysSearch as string));
+      url.append("days", filters.days || (daysSearch as string));
     }
     if ((startDaySearch && endDaySearch) || (startDate && endDate)) {
       url.append(
