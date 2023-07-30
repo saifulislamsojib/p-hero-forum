@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 const getHttpService = () => {
   const instance = axios.create({
     baseURL: process.env.API_BASE_URL,
-    timeout: 150000,
+    timeout: 150000000,
   });
 
   const responseBody = <T extends object>(response: AxiosResponse<T>) =>
